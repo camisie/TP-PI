@@ -8,16 +8,15 @@ typedef struct data{
 	char * type;
 	char * title;
 	char * genre;
-	unsigned int year;
-	unsigned int rating;
+	double rating;
 	unsigned int votes;
 }dataType;
 
 /*Crea un nuevo TAD vacio*/
-moviesADT new();
+moviesADT newMoviesADT();
 
 /*Agrega la pelicula o serie */
-int addData(moviesADT m, dataType * data);
+void addData(moviesADT m, char * genre, unsigned int year, char * data, char * title, unsigned int votes, double rating);
 
 /*Retorna un vector(? con los años (ordenados en forma descendiente) y la cantidad de peliculas y series (por separado) de cada uno, dejando en dim 
 la dimension final del vector*/
