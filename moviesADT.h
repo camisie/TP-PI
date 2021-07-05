@@ -3,20 +3,21 @@
 
 typedef struct moviesCDT * moviesADT;
 
+/*Estructura que contiene los datos de cada pelicula o serie */
+typedef struct data{
+	char * type;
+	char * title;
+	char * genre;
+	unsigned int year;
+	unsigned int rating;
+	unsigned int votes;
+}dataType;
+
 /*Crea un nuevo TAD vacio*/
 moviesADT new();
 
-/*Agrega un nuevo año en forma descendente (insertando los mayores al principio). Si lo agrego retorna 1, si ya estaba o no pudo agregarlo retorna 0 */
-int addYear(moviesADT m, int year);
-
-/*Agrega un nuevo genero en orden alfabetico, segun el año indicado en el parametro year. Si lo agrego retorna 1, si ya estaba o no pudo agregarlo retorna 0 */
-int addGenre(moviesADT m, int year, const char * genre);
-
-/*Agrega la pelicula film a el o los generos especificados por el parametro genre en el año indicado por year */
-int addMovie(moviesADT m, int year, const char * genre, const char * film);
-
-/*Agrega la serie 'serie' a el o los generos especificados por el parametro genre en el año indicado por year */
-int addSerie(moviesADT m, int year, const char * genre, const char * serie);
+/*Agrega la pelicula o serie */
+int addData(moviesADT m, dataType * data);
 
 /*Retorna un vector(? con los años (ordenados en forma descendiente) y la cantidad de peliculas y series (por separado) de cada uno, dejando en dim 
 la dimension final del vector*/
