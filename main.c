@@ -93,3 +93,61 @@ int main(int argc, char * argv[]){
     readData(movieList, movieSeries); 
 
 }
+
+void solQ1(moviesADT m){
+    toBeginYear(m);
+
+    FILE * f1 = fopen("./query1.csv", "w");
+    fprintf(f1, "year;films;series\n");
+
+    unsigned int year, films, series;
+
+    while(hasNextYear(m)){
+        year = nextYear(m, &films, &series);
+        fprintf(f1, "%d;%d;%d\n", year, films, series);
+    }
+
+    fclose(f1);
+}
+
+void solQ2(moviesADT m){
+    toBeginYear(m);
+
+    FILE * f2 = fopen("./query2.csv", "w");
+    fprintf(f1, "year;genre;films\n");
+
+    unsigned int year, filmsYear, series, filmsGenre;
+
+    while(hasNextYear(m)){
+        year = nextYear(m, &filmsYear, &series);
+        toBeginGenre(m, year);
+        char * s = nextGenre(m, &filmsGenre);
+        fprintf(f2, "%d;%c;%d\n", year, s, filmsGenre);
+    }
+
+    fclose(f2);
+}
+
+void solQ3(moviesADT m){
+    toBeginYear(m);
+
+    FILE * f3 = fopen("./query3.csv", "w");
+    fprintf(f3, "startYear;film;votesFilm;ratingFilm;serie;votesSerie;ratingSerie\n");
+
+    unsigned int year, votesF, votesS, films, series;
+    double ratingF, ratingS;
+    char * s1; //la pelicula mas votada
+    char * s2; //la serie mas votada
+
+    while(hasNextYear(m)){
+        year = nextYear(m, &films, &series);
+        mostVoted(m, year, &s1, &votesF, &ratingF, &s2, &votesS, &ratingS);  
+        fprintf(f3, "%d;%c;%d;%g;%c;%d;%g\n", year, s1, votesF, ratingF, s2, votesS, ratingS);
+    }
+
+    fclose(f3);
+}
+
+
+
+
