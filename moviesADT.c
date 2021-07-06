@@ -36,11 +36,18 @@ typedef struct moviesCDT{
     TYear * firstYear;
 }moviesCDT;
 
-
+moviesADT newMoviesADT(){
+    moviesADT newM = calloc(1, sizeof(moviesCDT));
+    if(newM == NULL)
+        return NULL;
+    return newM;
+}
 
 static TYear * addYear(TYear * first, unsigned int year){
     if(first == NULL || first->year < year){ //o usar compare?
         TYear * aux = calloc(1, sizeof(TYear));
+        if(aux == NULL)
+            return NULL;
         aux->year = year;
         aux->tail = first;
         return aux;
@@ -55,6 +62,8 @@ static TGenre * addGenre(TGenre * first, char * name){
     int c;
     if(first == NULL || (c = strcmp(first->name, name)) > 0){
         TGenre * aux = malloc(sizeof(TGenre));
+        if(aux == NULL)
+            return NULL;
         aux->name = name;
         aux->sizeF = 0;
         aux->tail = first;
