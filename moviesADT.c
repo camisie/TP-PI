@@ -3,20 +3,20 @@
 #include<string.h>
 #include<stdlib.h>
 
-/*Estructura que contiene los datos de cada pelicula o serie */
+//*Estructura que contiene los datos de cada pelicula o serie
 typedef struct dataNode{
     char * type;
     char * title;
     char * genre;
     double rating;
-    unsigned int votes; //hace falta? 
+    unsigned int votes; 
 }TData;
 
 //Este es el nodo para la lista de generos
 typedef struct genreNode{
     char * name;
-    size_t sizeM; //cantidad de peliculas de ese genero
-    struct genreNode *tail;
+    size_t sizeM;      //cantidad de peliculas de ese genero
+    struct genreNode * tail;
 }TGenre;
 
 //estructura del nodo para la lista de años
@@ -29,13 +29,13 @@ typedef struct yearNode{
     size_t votesM;
     TData * bestSerie;  //puntero a la estructura con datos de la serie mas votada
     size_t votesS;
-    TGenre * currentGenre;
-    struct yearNode *tail;
+    TGenre * currentGenre;  //para iterar por los generos
+    struct yearNode * tail;
 }TYear;
 
 typedef struct moviesCDT{
     TYear * firstYear;
-    TYear * currentYear;
+    TYear * currentYear;    //para iterar por los años
 }moviesCDT;
 
 moviesADT newMoviesADT(){
@@ -115,17 +115,19 @@ unsigned int hasNextYear(moviesADT m){
     return m->currentYear != NULL;
 }
 
-unsigned int nextYear(moviesADT m, unsigned int *movies, unsigned int *series){
+unsigned int nextYear(moviesADT m, unsigned int * movies, unsigned int * series){
     if(!hasNextYear(m->currentYear))
         exit(1);
+
     *movies = m->currentYear->totalM;
     *series = m->currentYear->totalS;
-    unsigned int *aux = m->currentYear->year;
+
+    unsigned int aux = m->currentYear->year;
     m->currentYear = m->currentYear->tail;
     return aux;
 }
 
-static TYear *searchYear(TYear *first, unsigned int year){
+static TYear * searchYear(TYear * first, unsigned int year){
     if(first == NULL || first->year < year)
         return NULL;
     if(first->year > year)
@@ -134,7 +136,7 @@ static TYear *searchYear(TYear *first, unsigned int year){
 }
 
 void toBeginGenre(moviesADT m, unsigned int year){
-    TYear *aux = searchYear(m->firstYear, year);
+    TYear * aux = searchYear(m->firstYear, year);
     if(aux != NULL){
         aux->currentGenre = aux->firstGenre;
     }
@@ -147,14 +149,15 @@ unsigned int hasNextGenre(moviesADT m){
 char * nextGenre(moviesADT m, unsigned int *movies){
     if(!hasNextGenre)
         exit(1);
+
     *movies = m->currentGenre->sizeM;
-    char *aux = m->currentGenre->name;
+    char * aux = m->currentGenre->name;
     m->currentGenre = m->currentGenre->tail;
     return aux;
 }
 
-void mostVoted(moviesADT m, unsigned int year, char *movieTitle, unsigned int *movieVotes, double *movieRating, char *serieTitle, unsigned int *serieVotes, double *serieRating){
-    TYear *aux = searchYear(m->firstYear, year);
+void mostVoted(moviesADT m, unsigned int year, char * movieTitle, unsigned int * movieVotes, double * movieRating, char * serieTitle, unsigned int * serieVotes, double * serieRating){
+    TYear * aux = searchYear(m->firstYear, year);
     *movieTitle = aux->bestMovie->title;
     *movieVotes = aux->bestMovie->votes;
     *movieRating = aux->bestMovie->rating;
