@@ -5,8 +5,51 @@
 #include <ctype.h>
 
 #define DIV ";"
+#define MAX 500
 
-void addData(moviesADT m, char * genre, unsigned int year, char * data, char * title, unsigned int votes, double rating);
+enum  dataset {TYPE = 0, TITLE, STARTY, ENDY, GENRE, RATING, VOTES, TIME};
+int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, char * title, unsigned int votes, double rating);
+
+void readData(moviesADT m, FILE * data){
+    char token[MAX];
+    char * line;
+
+    /* Hay que saltear la primera linea*/
+    fgets(token, MAX, data);
+    int i;
+    int year, votes, genre, type, title, rating;
+
+
+    while (fgets(token, MAX, data) != NULL){
+        line = strtok(token, DIV || "\n\r");
+        for (i = 0; i <= VOTES; i++){
+            switch (i){
+                case TYPE: type = atoi(line);
+                break;
+                case TITLE: title = atoi(line);
+                break;
+                case STARTY: year = atoi(line);
+                break;
+                case GENRE: genre = atoi(line);
+                break;
+                case RATING: rating = atoi(line);
+                break;
+                case VOTES: votes = atoi(line);
+                break;
+                default: break;
+            }
+            line = strtok(NULL, DIV || "\n\r");
+        }
+
+        int added = addMovieSeries(movieList, genre, year, type, title, votes, rating);
+
+        /* Se chequea que se haya agregado correctamente */
+        if (!added) {
+            fprintf(stderr, "Error adding data\n");
+            return;
+        }
+    }  
+}
 
 int main(int argc, char * argv[]){
     
@@ -45,4 +88,8 @@ int main(int argc, char * argv[]){
         fprintf(stderr, "Not enough memory available\n");
         return 1;
     }
+
+    //con los datos del archivo .csv completamos la lista
+    readData(movieList, movieSeries); 
+
 }
