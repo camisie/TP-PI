@@ -29,11 +29,13 @@ typedef struct yearNode{
     size_t votesM;
     TData * bestSerie;  //puntero a la estructura con datos de la serie mas votada
     size_t votesS;
+    TGenre * currentGenre;
     struct yearNode *tail;
 }TYear;
 
 typedef struct moviesCDT{
     TYear * firstYear;
+    TYear * currentYear;
 }moviesCDT;
 
 moviesADT newMoviesADT(){
@@ -105,6 +107,59 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
     return 0;
 }
 
+void toBeginYear(moviesADT m){
+    m->currentYear = m->firstYear;
+}
 
+unsigned int hasNextYear(moviesADT m){
+    return m->currentYear != NULL;
+}
 
+unsigned int nextYear(moviesADT m, unsigned int *movies, unsigned int *series){
+    if(!hasNextYear(m->currentYear))
+        exit(1);
+    *movies = m->currentYear->totalM;
+    *series = m->currentYear->totalS;
+    unsigned int *aux = m->currentYear->year;
+    m->currentYear = m->currentYear->tail;
+    return aux;
+}
+
+static TYear *searchYear(TYear *first, unsigned int year){
+    if(first == NULL || first->year < year)
+        return NULL;
+    if(first->year > year)
+        return searchYear(first->tail, year);
+    return first;
+}
+
+void toBeginGenre(moviesADT m, unsigned int year){
+    TYear *aux = searchYear(m->firstYear, year);
+    if(aux != NULL){
+        aux->currentGenre = aux->firstGenre;
+    }
+}
+
+unsigned int hasNextGenre(moviesADT m){
+    return m->currentGenre != NULL;
+}
+
+char * nextGenre(moviesADT m, unsigned int *movies){
+    if(!hasNextGenre)
+        exit(1);
+    *movies = m->currentGenre->sizeM;
+    char *aux = m->currentGenre->name;
+    m->currentGenre = m->currentGenre->tail;
+    return aux;
+}
+
+void mostVoted(moviesADT m, unsigned int year, char *movieTitle, unsigned int *movieVotes, double *movieRating, char *serieTitle, unsigned int *serieVotes, double *serieRating){
+    TYear *aux = searchYear(m->firstYear, year);
+    *movieTitle = aux->bestMovie->title;
+    *movieVotes = aux->bestMovie->votes;
+    *movieRating = aux->bestMovie->rating;
+    *serieTitle = aux->bestSerie->title;
+    *serieVotes = aux->bestSerie->votes;
+    *serieRating = aux->bestSerie->rating;
+}
 
