@@ -7,7 +7,6 @@
 typedef struct dataNode{
     char * type;
     char * title;
-    char * genre;
     double rating;
     unsigned int votes; 
 }TData;
@@ -26,9 +25,9 @@ typedef struct yearNode{
     size_t totalM;      //cantidad total de peliculas en ese año
     size_t totalS;      //cantidad total de series en ese año
     TData * bestMovie;  //puntero a la estructura con datos de la pelicula mas votada
-    size_t votesM;
+    //size_t votesM;
     TData * bestSerie;  //puntero a la estructura con datos de la serie mas votada
-    size_t votesS;
+    //size_t votesS;
     TGenre * currentGenre;  //para iterar por los generos
     struct yearNode * tail;
 }TYear;
@@ -77,13 +76,13 @@ static TGenre * addGenre(TGenre * first, char * name){
     return first;
 }
 
-int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, char * title, unsigned int votes, double rating){
+int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int year, char * type, char * title, unsigned int votes, double rating){
     TYear * currentY = addYear(m->firstYear, year); //busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
     if(strcmp("TvSeries", type) == 0){ //si es una serie lo que me pasan
         currentY->totalS ++;
-        if(currentY->votesS < votes){ //actualizo el mas popular
-            m->bestSerie.type = type;
-            m->bestSerie.title = title;
+        if(currentY->bestSerie->votes < votes){ //actualizo el mas popular
+            m->bestSerie->type = type;
+            m->bestSerie->title = title;
             m->bestSerie->genre = genre;
             m->bestSerie->rating = rating;
             m->bestSerie->votes = votes;
@@ -92,16 +91,19 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
     }
     if(strcmp("movie", type) == 0){ //si me pasan una pelicula
         currentY->totalM++;
-        if(currentY->votesM < votes){ //actualizo el mas popular
-            m->bestMovie.type = type;
-            m->bestMovie.title = title;
+        if(currentY->bestMovie->votes < votes){ //actualizo el mas popular
+            m->bestMovie->type = type;
+            m->bestMovie->title = title;
             m->bestMovie->genre = genre;
             m->bestMovie->rating = rating;
             m->bbestMovie->votes = votes;
         }
-        
-        TGenre * currentG = addGenre(currentY->firstGenre, genre); //busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
-        currentG->sizeM++;
+        unsigned int i = 0;
+        //recorremos el vector que almacena los distintos generos para una pelicula y agregamos la misma en cada uno
+        while(i < dim){
+            TGenre * currentG = addGenre(currentY->firstGenre, genre[i]); //busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
+            currentG->sizeM++;
+        }
         return 1;
     }
     return 0;

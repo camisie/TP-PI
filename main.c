@@ -4,11 +4,32 @@
 #include <string.h>
 #include <ctype.h>
 
-#define DIV ";"
+#define DIV ";\n\r\t"
+#define GDIV ","
 #define MAX 500
+#define BLOCK 20
 
 enum  dataset {TYPE = 0, TITLE, STARTY, ENDY, GENRE, RATING, VOTES, TIME};
 int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, char * title, unsigned int votes, double rating);
+
+//Implementamos una funcion que luego de leer el string con los distintos generos (separados por ,), devuelve un vector, donde en cada posicion
+//almacena un genero, y deja su dimension en un parametro de salida
+char ** genreVec(char * s, unsigned int * dim){
+    char token[MAX];
+    char * line;
+    char ** vec = malloc(sizeof(char *) * BLOCK);
+    unsigned int i;
+
+    while(fgets(token, MAX, s) != NULL){
+        line = strtok(token, GDIV);
+        if(i % BLOCK == 0)
+            vec = realloc(vec, BLOCK + i + 1);
+        vec[i++] = line;
+    }
+    vec = realloc(vec, i + 1);
+    *dim = i;
+    return vec;
+}
 
 void readData(moviesADT m, FILE * data){
     char token[MAX];
@@ -17,31 +38,37 @@ void readData(moviesADT m, FILE * data){
     /* Hay que saltear la primera linea*/
     fgets(token, MAX, data);
     int i;
-    int year, votes, genre, type, title, rating;
+    int year, votes;
+    double rating;
+    char type[50];
+    char title[50];
+    char genre[50];
 
 
     while (fgets(token, MAX, data) != NULL){
-        line = strtok(token, DIV || "\n\r");
+        line = strtok(token, DIV);
         for (i = 0; i <= VOTES; i++){
             switch (i){
-                case TYPE: type = atoi(line);
+                case TYPE: strncpy(type, line, strlen(line));
                 break;
-                case TITLE: title = atoi(line);
+                case TITLE: strncpy(title, line, strlen(line));
                 break;
                 case STARTY: year = atoi(line);
                 break;
-                case GENRE: genre = atoi(line);
+                case GENRE: strncpy(genre, line, strlen(line));
                 break;
-                case RATING: rating = atoi(line);
+                case RATING: rating = atof(line);
                 break;
                 case VOTES: votes = atoi(line);
                 break;
                 default: break;
             }
-            line = strtok(NULL, DIV || "\n\r");
+            line = strtok(NULL, DIV);
         }
+        unsigned int dim = 0;
+        char ** vec = genreVec(genre, &dim);
 
-        int added = addMovieSeries(movieList, genre, year, type, title, votes, rating);
+        int added = addMovieSeries(movieList, vec, dim, year, type, title, votes, rating);
 
         /* Se chequea que se haya agregado correctamente */
         if (!added) {
