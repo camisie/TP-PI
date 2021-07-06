@@ -3,7 +3,7 @@
 #include<string.h>
 #include<stdlib.h>
 
-//*Estructura que contiene los datos de cada pelicula o serie
+//Estructura que contiene los datos de cada pelicula o serie
 typedef struct dataNode{
     char * type;
     char * title;
@@ -14,27 +14,25 @@ typedef struct dataNode{
 //Este es el nodo para la lista de generos
 typedef struct genreNode{
     char * name;
-    size_t sizeM;      //cantidad de peliculas de ese genero
+    size_t sizeM;      //Cantidad de peliculas de ese genero
     struct genreNode * tail;
 }TGenre;
 
-//estructura del nodo para la lista de años
+//Estructura del nodo para la lista de años
 typedef struct yearNode{
     TGenre * firstGenre;     
     unsigned int year;
-    size_t totalM;      //cantidad total de peliculas en ese año
-    size_t totalS;      //cantidad total de series en ese año
-    TData * bestMovie;  //puntero a la estructura con datos de la pelicula mas votada
-    //size_t votesM;
-    TData * bestSerie;  //puntero a la estructura con datos de la serie mas votada
-    //size_t votesS;
-    TGenre * currentGenre;  //para iterar por los generos
+    size_t totalM;      //Cantidad total de peliculas en ese año
+    size_t totalS;      //Cantidad total de series en ese año
+    TData * bestMovie;  //Puntero a la estructura con datos de la pelicula mas votada
+    TData * bestSerie;  //Puntero a la estructura con datos de la serie mas votada
+    TGenre * currentGenre;  //Para iterar por los generos
     struct yearNode * tail;
 }TYear;
 
 typedef struct moviesCDT{
     TYear * firstYear;
-    TYear * currentYear;    //para iterar por los años
+    TYear * currentYear;    //Para iterar por los años
 }moviesCDT;
 
 moviesADT newMoviesADT(){
@@ -77,10 +75,10 @@ static TGenre * addGenre(TGenre * first, char * name){
 }
 
 int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int year, char * type, char * title, unsigned int votes, double rating){
-    TYear * currentY = addYear(m->firstYear, year); //busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
-    if(strcmp("TvSeries", type) == 0){ //si es una serie lo que me pasan
+    TYear * currentY = addYear(m->firstYear, year); //Busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
+    if(strcmp("TvSeries", type) == 0){ //Si es una serie lo que me pasan
         currentY->totalS ++;
-        if(currentY->bestSerie->votes < votes){ //actualizo el mas popular
+        if(currentY->bestSerie->votes < votes){ //Actualizo el mas popular
             m->bestSerie->type = type;
             m->bestSerie->title = title;
             m->bestSerie->genre = genre;
@@ -89,9 +87,9 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         } //sino no hago nada
         return 1;
     }
-    if(strcmp("movie", type) == 0){ //si me pasan una pelicula
+    if(strcmp("movie", type) == 0){ //Si me pasan una pelicula
         currentY->totalM++;
-        if(currentY->bestMovie->votes < votes){ //actualizo el mas popular
+        if(currentY->bestMovie->votes < votes){ //Actualizo el mas popular
             m->bestMovie->type = type;
             m->bestMovie->title = title;
             m->bestMovie->genre = genre;
@@ -99,9 +97,9 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
             m->bbestMovie->votes = votes;
         }
         unsigned int i = 0;
-        //recorremos el vector que almacena los distintos generos para una pelicula y agregamos la misma en cada uno
+        //Recorremos el vector que almacena los distintos generos para una pelicula y agregamos la misma en cada uno
         while(i < dim){
-            TGenre * currentG = addGenre(currentY->firstGenre, genre[i]); //busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
+            TGenre * currentG = addGenre(currentY->firstGenre, genre[i]); //Busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
             currentG->sizeM++;
         }
         return 1;
@@ -168,3 +166,24 @@ void mostVoted(moviesADT m, unsigned int year, char * movieTitle, unsigned int *
     *serieRating = aux->bestSerie->rating;
 }
 
+static void freeRecGen(TGenre *first){
+    if(first == NULL)
+        return;
+    freeRecGen(first->tail);
+    free(first);
+}
+
+static void freeRecYears(TYear *first){
+    if(first == NULL)
+        return;
+    freeRecYears(first->tail);
+    freeRecGen(first->firstGenre);
+    free(first->bestMovie);
+    free(first->bestSerie);
+    free(first);
+}
+
+void freeMoviesADT(moviesADT m){
+    freeRecYears(m->firstYear);
+    free(m);
+}
