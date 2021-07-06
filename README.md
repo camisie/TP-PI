@@ -1,6 +1,6 @@
 # TRABAJO PRACTICO FINAL
 
-El programa consiste en procesar los datos de un archivo que contiene informacion de series y peliculas (provisto por la Cátedra) y realizar un ejecutable bajo ciertos criterios. En nuestro caso, debiamos responder a los siguientes queries:
+El programa consiste en procesar los datos de un archivo que contiene informacion de series y peliculas (provisto por la Cátedra) y realizar un ejecutable bajo ciertos criterios. En nuestro caso, debíamos responder a los siguientes queries:
 
 1. Cantidad de peliculas y series por año
 2. Cantidad de peliculas por año y por género
@@ -22,15 +22,33 @@ El programa consiste en procesar los datos de un archivo que contiene informacio
 
 ## Compilación
 
+Ubicándose en el directorio previamente mencionado, ejecutar el siguiente comando en la terminal:
+    `> make all `
+Esto crea un ejecutable de nombre *imdb*.
+
+En caso de querer eliminar el archivo ejecutable creado, se debe ingresar el siguiente comando:
+    `> make clean`
+
 ***
 
 ## Ejecución
+
+En la terminal, se ejecuta el siguiente comando:
+    `./imdb imdbv2.csv`
+en el mismo directorio en el que se viene trabajando y se utiliza el archivo imdbv2.csv como único argumento. En caso de utilizarse otro archivo de datos con las características requeridas, se inserta ese como argumento. 
+    
+**A tener en cuenta:** Si el archivo .csv no se encuentra en el mismo directorio que el ejecutable, debe invocarse agregando el path correspondiente. 
 
 ***
 
 ## Después de ejecutar
 
-***
+En la salida estándar se podrá leer el siguiente mensaje:
+    `The program ended successfully`
 
-## En caso de querer borrar
+Además, se habrán creado en el mismo directorio donde se ejecutó el programa los siguientes archivos:
+* query1.csv
+* query2.csv
+* query3.csv
 
+los cuales contendrán la información correspondiente a las consignas asignadas por la Cátedra.
