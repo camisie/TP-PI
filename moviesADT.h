@@ -10,17 +10,19 @@ moviesADT newMoviesADT();
 /*Agrega la pelicula o serie */
 void addMovieSeries(moviesADT m, char * genre, unsigned int year, char * data, char * title, unsigned int votes, double rating);
 
-/*Retorna un vector(? con los años (ordenados en forma descendiente) y la cantidad de peliculas y series (por separado) de cada uno, dejando en dim 
-la dimension final del vector*/
-TYear * solQ1(moviesADT m, int * dim);
+void toBeginYear(moviesADT m);
 
-/*Retorna un vector(? con los años (ordenados en forma descendiente), sus generos (ordenados alfabeticamente) y la cantidad de peliculas de cada uno, 
-dejando en dim la dimension final del vector*/
-TGenre * solQ2(moviesADT m, int * dim);
+unsigned int hasNextYear(moviesADT m);
 
-/*Retorna un vector(? con los años (ordenados en forma descendiente), la pelicula mas votada en cada uno, la cantidad de votos y el raiting de cada una, 
-y lo mismo para la seria mas votada. Deja en dim la dimension final del vector*/
-TQ3 * solQ3();
+unsigned int nextYear(moviesADT m, unsigned int *movies, unsigned int *series);
+
+void toBeginGenre(moviesADT m, unsigned int year);
+
+unsigned int hasNextGenre(moviesADT m);
+
+char * nextGenre(moviesADT m, unsigned int *movies);
+
+void mostVoted(moviesADT m, unsigned int year, char *movieTitle, unsigned int *movieVotes, double *movieRating, char *serieTitle, unsigned int *serieVotes, double *serieRating);
 
 /*Libera todos los recursos reservados por el TAD*/
 void freeMoviesADT(moviesADT m);
