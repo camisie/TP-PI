@@ -14,18 +14,24 @@ enum  dataset {TYPE = 0, TITLE, STARTY, ENDY, GENRE, RATING, VOTES, TIME};
 //Implementamos una funcion que luego de leer el string con los distintos generos (separados por ,), devuelve un vector,
 //donde en cada posicion almacena un genero, y deja su dimension en un parametro de salida
 char ** genreVec(char * s, unsigned int * dim){
-    char token[MAX];
     char * line;
     char ** vec = malloc(sizeof(char *) * BLOCK);
-    unsigned int i;
+    if(vec == NULL)
+        return NULL;
 
-    while(fgets(token, MAX, s) != NULL){
-        line = strtok(token, GDIV);
+    unsigned int i = 0;
+    line = strtok(s, DIV);
+
+    while(line != NULL){
+        
         if(i % BLOCK == 0)
-            vec = realloc(vec, BLOCK + i + 1);
+            vec = realloc(vec, sizeof(char *) * (BLOCK + i + 1));
         vec[i++] = line;
+
+        line = strtok(NULL, GDIV);
     }
-    vec = realloc(vec, i + 1);
+    
+    vec = realloc(vec, sizeof(char *) * (i + 1));
     *dim = i;
     return vec;
 }
@@ -39,22 +45,21 @@ void readData(moviesADT m, FILE * data){
     int i;
     int year, votes;
     double rating;
-    char type[50];
-    char title[50];
-    char genre[50];
-
+    char * type;
+    char * title;
+    char * genre;
 
     while (fgets(token, MAX, data) != NULL){
         line = strtok(token, DIV);
         for (i = 0; i <= VOTES; i++){
             switch (i){
-                case TYPE: strncpy(type, line, strlen(line));
+                case TYPE: type = line; 
                 break;
-                case TITLE: strncpy(title, line, strlen(line));
+                case TITLE: title = line;
                 break;
                 case STARTY: year = atoi(line);
                 break;
-                case GENRE: strncpy(genre, line, strlen(line));
+                case GENRE: genre = line;
                 break;
                 case RATING: rating = atof(line);
                 break;
@@ -66,8 +71,7 @@ void readData(moviesADT m, FILE * data){
         }
         unsigned int dim = 0;
         char ** vec = genreVec(genre, &dim);
-
-        int added = addMovieSeries(movieList, vec, dim, year, type, title, votes, rating);
+        int added = addMovieSeries(m, vec, dim, year, type, title, votes, rating);
 
         //Se chequea que se haya agregado correctamente
         if (!added) {
@@ -97,7 +101,7 @@ void solQ2(moviesADT m){
     toBeginYear(m);
 
     FILE * f2 = fopen("./query2.csv", "w");
-    fprintf(f1, "year;genre;films\n");
+    fprintf(f2, "year;genre;films\n");
 
     unsigned int year, filmsYear, series, filmsGenre;
 
@@ -105,7 +109,7 @@ void solQ2(moviesADT m){
         year = nextYear(m, &filmsYear, &series);
         toBeginGenre(m, year);
         char * s = nextGenre(m, &filmsGenre);
-        fprintf(f2, "%d;%c;%d\n", year, s, filmsGenre);
+        fprintf(f2, "%d;%s;%d\n", year, s, filmsGenre);
     }
 
     fclose(f2);
@@ -125,7 +129,7 @@ void solQ3(moviesADT m){
     while(hasNextYear(m)){
         year = nextYear(m, &films, &series);
         mostVoted(m, year, &s1, &votesF, &ratingF, &s2, &votesS, &ratingS);  
-        fprintf(f3, "%d;%c;%d;%g;%c;%d;%g\n", year, s1, votesF, ratingF, s2, votesS, ratingS);
+        fprintf(f3, "%d;%s;%d;%g;%s;%d;%g\n", year, s1, votesF, ratingF, s2, votesS, ratingS);
     }
 
     fclose(f3);
@@ -139,12 +143,6 @@ int main(int argc, char * argv[]){
         return 1;
     }
     
-    //Se valida que se haya ingresado el archivo correcto
-    //Utilizamos argv[1] ya que argv[0] tiene la info de como pasan los datos
-    if (strstr(argv[1], "imdbv2.csv") == NULL){
-        fprintf(stderr, "Wrong file\n");
-        return 1;
-    }
     //Si el archivo de los queries ya existe, se notifica que hay un error
     if (fopen("query1.csv", "r") != NULL || fopen("query2.csv", "r") != NULL || fopen("query3.csv", "r") != NULL){
         fprintf(stderr, "That file already exists\n");
@@ -152,14 +150,14 @@ int main(int argc, char * argv[]){
     }
     
     //Se genera el archivo
-    FILE *movieSeries = fopen(argv[1], "r");
+    FILE * movieSeries = fopen(argv[1], "r");
 
     //Se comprueba que el archivo exista y se puede abrir
     if(movieSeries == NULL){
-        fprintf(stderr, "File not found\n");
+        fprintf(stderr, "File not found or cannot access file\n");
         return 1;
     }
-    
+
     //Se crea un nuevo TAD vacio
     moviesADT movieList = newMoviesADT();
 
@@ -171,7 +169,7 @@ int main(int argc, char * argv[]){
 
     //Con los datos del archivo .csv completamos la lista
     readData(movieList, movieSeries);
-    
+
     //Una vez leido el archivo, ejecutamos los queries
     solQ1(movieList);
     solQ2(movieList);
