@@ -53,7 +53,7 @@ void readData(moviesADT m, FILE * data){
         line = strtok(token, DIV);
         for (i = 0; i <= VOTES; i++){
             switch (i){
-                case TYPE: type = line; 
+                case TYPE: type = line;
                 break;
                 case TITLE: title = line;
                 break;
@@ -125,12 +125,11 @@ void solQ3(moviesADT m){
 
     unsigned int year, votesF, votesS, films, series;
     double ratingF, ratingS;
-    char *s1; //la pelicula mas votada
-    char *s2; //la serie mas votada
 
     while(hasNextYear(m)){
         year = nextYear(m, &films, &series);
-        mostVoted(m, year, &s1, &votesF, &ratingF, &s2, &votesS, &ratingS);  
+        char * s1 = mostVotedMovie(m, year, &votesF, &ratingF);
+        char * s2 = mostVotedSerie(m, year, &votesS, &ratingS);
         fprintf(f3, "%d;%s;%d;%g;%s;%d;%g\n", year, s1, votesF, ratingF, s2, votesS, ratingS);
     }
 

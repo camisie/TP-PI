@@ -99,7 +99,8 @@ static TGenre * addGenreRec(TGenre * first, char * name){
             perror("Not enough memory");
             return NULL;
         }    
-        aux->name = name;
+        aux->name = malloc(strlen(name) + 1);
+        strcpy(aux->name, name);                //cambie aca
         aux->sizeM = 1; //porque se que estan llamando a la funcion para agregar una pelicula
         aux->tail = first;
         return aux;
@@ -125,7 +126,8 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         currentY->totalS++;
         if(currentY->bestSerie->votes < votes){ //Actualizo el mas popular
             currentY->bestSerie->type = type;
-            currentY->bestSerie->title = title;
+            currentY->bestSerie->title = malloc(strlen(title) + 1);
+            strcpy(currentY->bestSerie->title, title);              //cambie aca
             currentY->bestSerie->rating = rating;
             currentY->bestSerie->votes = votes;
         } //sino no hago nada
@@ -134,7 +136,8 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         currentY->totalM++;
         if(currentY->bestMovie->votes < votes){ //Actualizo el mas popular
             currentY->bestMovie->type = type;
-            currentY->bestMovie->title = title;
+            currentY->bestMovie->title = malloc(strlen(title) + 1);
+            strcpy(currentY->bestMovie->title, title);              //cambie aca
             currentY->bestMovie->rating = rating;
             currentY->bestMovie->votes = votes;
         }
@@ -183,19 +186,36 @@ unsigned int hasNextGenre(moviesADT m){
 
 char * nextGenre(moviesADT m, unsigned int *movies){
     *movies = m->currentGenre->sizeM;   //esta asignando mal
-    char * aux = m->currentGenre->name; //mal
+    char * aux = malloc(strlen(m->currentGenre->name) + 1);
+    strcpy(aux, m->currentGenre->name);
     m->currentGenre = m->currentGenre->tail;
     return aux;
 }
 
-void mostVoted(moviesADT m, unsigned int year, char ** movieTitle, unsigned int * movieVotes, double * movieRating, char ** serieTitle, unsigned int * serieVotes, double * serieRating){
-    TYear * aux = searchYear(m->firstYear, year);
-    *movieTitle = aux->bestMovie->title;    //imprime cualquier cosa Q3
+// char * mostVoted(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating, char ** serieTitle, unsigned int * serieVotes, double * serieRating){
+//     TYear * aux = searchYear(m->firstYear, year);
+//     *movieTitle = aux->bestMovie->title;    
+//     *movieVotes = aux->bestMovie->votes;
+//     *movieRating = aux->bestMovie->rating;
+//     *serieTitle = aux->bestSerie->title;    
+//     *serieVotes = aux->bestSerie->votes;
+//     *serieRating = aux->bestSerie->rating;
+// }
+
+char * mostVotedMovie(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating){
+    TYear * aux = searchYear(m->firstYear, year);   //busco el año que me pasan y lo guardo en TYear
+    char * movieTitle = aux->bestMovie->title;
     *movieVotes = aux->bestMovie->votes;
     *movieRating = aux->bestMovie->rating;
-    *serieTitle = aux->bestSerie->title;    //imprime vacio / cualq cosa
+    return movieTitle;    
+}
+
+char * mostVotedSerie(moviesADT m, unsigned int year, unsigned int * serieVotes, double * serieRating){
+    TYear * aux = searchYear(m->firstYear, year);   //busco el año que me pasan y lo guardo en TYear
+    char * serieTitle = aux->bestSerie->title;
     *serieVotes = aux->bestSerie->votes;
     *serieRating = aux->bestSerie->rating;
+    return serieTitle;    
 }
 
 static void freeRecGen(TGenre *first){
