@@ -183,8 +183,9 @@ unsigned int hasNextGenre(moviesADT m){
 
 char * nextGenre(moviesADT m, unsigned int *movies){
     *movies = m->currentGenre->sizeM;   
-    char * aux = malloc(strlen(m->currentGenre->name) + 1);
-    strcpy(aux, m->currentGenre->name);
+    char * aux = m->currentGenre->name;         //cambie aca
+    // char * aux = malloc(strlen(m->currentGenre->name) + 1);
+    // strcpy(aux, m->currentGenre->name);
     m->currentGenre = m->currentGenre->tail;
     return aux;
 }
