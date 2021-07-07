@@ -7,6 +7,9 @@ typedef struct moviesCDT * moviesADT;
 //Crea un nuevo TAD vacio
 moviesADT newMoviesADT();
 
+//ver si es necesario que este aca
+//static void addYear(moviesADT m, unsigned int year){
+
 //Agrega la pelicula o serie
 int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int year, char * data, char * title, unsigned int votes, double rating);
 

@@ -85,16 +85,13 @@ static TYear * addYearRec(TYear * first, unsigned int year){
     return first;
 }
 
-static TYear * addYear(moviesADT m, unsigned int year){
-    if( year == 0)
-        return NULL;
-
+static void addYear(moviesADT m, unsigned int year){
+    if(year == 0)
+        return;
     m->firstYear = addYearRec(m->firstYear, year);
-    TYear *aux = searchYear(m->firstYear, year);
-    return aux;
 }
 
-static TGenre * addGenreRec(TGenre * first, char * name){
+static TGenre * addGenre(TGenre * first, char * name){
     int c;
     if(first == NULL || (c = strcmp(first->name, name)) > 0){
         TGenre * aux = malloc(sizeof(TGenre));
@@ -109,19 +106,16 @@ static TGenre * addGenreRec(TGenre * first, char * name){
         return aux;
     }
     if(c < 0)
-        first->tail = addGenreRec(first->tail, name);
+        first->tail = addGenre(first->tail, name);
     else
         first->sizeM += 1;
 
     return first;
 }
 
-static void addGenre(TYear * aux, char * name){
-    aux->firstGenre = addGenreRec(aux->firstGenre, name);
-}
-
 int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int year, char * type, char * title, unsigned int votes, double rating){
-    TYear * currentY = addYear(m, year); //Busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
+    addYear(m, year); //Busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
+    TYear * currentY = searchYear(m->firstYear, year);
     if(currentY == NULL)
         return 2;   //si en el parametro del año nos pasan "\N" (que nuestra funcion readData lo convierte en 0) 
                     //la funcion no agrega
@@ -148,7 +142,7 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         unsigned int i = 0;
         //Recorremos el vector que almacena los distintos generos para una pelicula y agregamos la misma en cada uno
         while(i < dim){
-            addGenre(currentY, genre[i]); //Busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
+            currentY->firstGenre = addGenre(currentY->firstGenre, genre[i]); //Busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
             i++;
         }
     }
