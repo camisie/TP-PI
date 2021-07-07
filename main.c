@@ -178,6 +178,8 @@ int main(int argc, char * argv[]){
     
     //Se libera la memoria utilizada
     freeMoviesADT(movieList);
+
+    printf("The queries were created successfully!\n");
     
     return 0;
 }

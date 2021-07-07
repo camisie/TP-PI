@@ -3,8 +3,6 @@
 #include<string.h>
 #include<stdlib.h>
 
-#define EMPTY "\N"
-
 //Estructura que contiene los datos de cada pelicula o serie
 typedef struct dataNode{
     char * type;
@@ -88,8 +86,9 @@ static TYear * addYearRec(TYear * first, unsigned int year){
 }
 
 static TYear * addYear(moviesADT m, unsigned int year){
-    if(year == 0)
+    if( year == 0)
         return NULL;
+
     m->firstYear = addYearRec(m->firstYear, year);
     TYear *aux = searchYear(m->firstYear, year);
     return aux;
@@ -104,8 +103,8 @@ static TGenre * addGenreRec(TGenre * first, char * name){
             return NULL;
         }    
         aux->name = malloc(strlen(name) + 1);
-        strcpy(aux->name, name);                //cambie aca
-        aux->sizeM = 1; //porque se que estan llamando a la funcion para agregar una pelicula
+        strcpy(aux->name, name);                
+        aux->sizeM = 1;         //porque se que estan llamando a la funcion para agregar una pelicula
         aux->tail = first;
         return aux;
     }
@@ -118,22 +117,21 @@ static TGenre * addGenreRec(TGenre * first, char * name){
 }
 
 static void addGenre(TYear * aux, char * name){
-    if(name == EMPTY)
-        return;
     aux->firstGenre = addGenreRec(aux->firstGenre, name);
 }
 
 int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int year, char * type, char * title, unsigned int votes, double rating){
     TYear * currentY = addYear(m, year); //Busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
-    
-    //TYear * currentY = addYearRec(m->firstYear, year);
+    if(currentY == NULL)
+        return 2;   //si en el parametro del año nos pasan "\N" (que nuestra funcion readData lo convierte en 0) 
+                    //la funcion no agrega
     
     if(strcmp("tvSeries", type) == 0){ //Si es una serie lo que me pasan
         currentY->totalS++;
         if(currentY->bestSerie->votes < votes){ //Actualizo el mas popular
             currentY->bestSerie->type = type;
             currentY->bestSerie->title = malloc(strlen(title) + 1);
-            strcpy(currentY->bestSerie->title, title);              //cambie aca
+            strcpy(currentY->bestSerie->title, title);              
             currentY->bestSerie->rating = rating;
             currentY->bestSerie->votes = votes;
         } //sino no hago nada
@@ -143,7 +141,7 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         if(currentY->bestMovie->votes < votes){ //Actualizo el mas popular
             currentY->bestMovie->type = type;
             currentY->bestMovie->title = malloc(strlen(title) + 1);
-            strcpy(currentY->bestMovie->title, title);              //cambie aca
+            strcpy(currentY->bestMovie->title, title);             
             currentY->bestMovie->rating = rating;
             currentY->bestMovie->votes = votes;
         }
@@ -152,7 +150,6 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         while(i < dim){
             addGenre(currentY, genre[i]); //Busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
             i++;
-            //currentG->sizeM++; //no recorrer al pedo
         }
     }
     else
@@ -191,7 +188,7 @@ unsigned int hasNextGenre(moviesADT m){
 }
 
 char * nextGenre(moviesADT m, unsigned int *movies){
-    *movies = m->currentGenre->sizeM;   //esta asignando mal
+    *movies = m->currentGenre->sizeM;   
     char * aux = malloc(strlen(m->currentGenre->name) + 1);
     strcpy(aux, m->currentGenre->name);
     m->currentGenre = m->currentGenre->tail;
