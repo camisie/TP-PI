@@ -6,7 +6,6 @@ El programa consiste en procesar los datos de un archivo que contiene informacio
 2. Cantidad de peliculas por año y por género
 3. La pelicula y la serie con más votos de cada año
 
-***
 
 ## Requerimientos previos a arrancar:
 
@@ -18,7 +17,6 @@ El programa consiste en procesar los datos de un archivo que contiene informacio
     * main.c
     * makefile
     
-***
 
 ## Compilación
 
@@ -29,7 +27,6 @@ Esto crea un ejecutable de nombre *imdb*.
 En caso de querer eliminar el archivo ejecutable creado, se debe ingresar el siguiente comando:
     `> make clean`
 
-***
 
 ## Ejecución
 
@@ -39,7 +36,6 @@ en el mismo directorio en el que se viene trabajando y se utiliza el archivo imd
     
 **A tener en cuenta:** Si el archivo .csv no se encuentra en el mismo directorio que el ejecutable, debe invocarse agregando el path correspondiente. 
 
-***
 
 ## Después de ejecutar
 
