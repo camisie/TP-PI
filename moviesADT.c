@@ -24,8 +24,8 @@ typedef struct yearNode{
     unsigned int year;
     unsigned int totalM;      //Cantidad total de peliculas en ese año
     unsigned int totalS;      //Cantidad total de series en ese año
-    TData * bestMovie;  //Puntero a la estructura con datos de la pelicula mas votada
-    TData * bestSerie;  //Puntero a la estructura con datos de la serie mas votada
+    TData * bestMovie;        //Puntero a la estructura con datos de la pelicula mas votada
+    TData * bestSerie;        //Puntero a la estructura con datos de la serie mas votada
     struct yearNode * tail;
 }TYear;
 
@@ -107,11 +107,12 @@ static TGenre * addGenreRec(TGenre * first, char * name){
     if(c < 0)
         first->tail = addGenreRec(first->tail, name);
     else
-        first->sizeM++;
+        first->sizeM += 1;
+
     return first;
 }
 
-static void addGenre(TYear *aux, char * name){
+static void addGenre(TYear * aux, char * name){
     aux->firstGenre = addGenreRec(aux->firstGenre, name);
 }
 
@@ -181,19 +182,18 @@ unsigned int hasNextGenre(moviesADT m){
 }
 
 char * nextGenre(moviesADT m, unsigned int *movies){
-    *movies = m->currentGenre->sizeM;
-    printf("%d\n", m->currentGenre->sizeM);
-    char * aux = m->currentGenre->name;
+    *movies = m->currentGenre->sizeM;   //esta asignando mal
+    char * aux = m->currentGenre->name; //mal
     m->currentGenre = m->currentGenre->tail;
     return aux;
 }
 
 void mostVoted(moviesADT m, unsigned int year, char ** movieTitle, unsigned int * movieVotes, double * movieRating, char ** serieTitle, unsigned int * serieVotes, double * serieRating){
     TYear * aux = searchYear(m->firstYear, year);
-    *movieTitle = aux->bestMovie->title;
+    *movieTitle = aux->bestMovie->title;    //imprime cualquier cosa Q3
     *movieVotes = aux->bestMovie->votes;
     *movieRating = aux->bestMovie->rating;
-    *serieTitle = aux->bestSerie->title;
+    *serieTitle = aux->bestSerie->title;    //imprime vacio / cualq cosa
     *serieVotes = aux->bestSerie->votes;
     *serieRating = aux->bestSerie->rating;
 }

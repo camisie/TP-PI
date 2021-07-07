@@ -20,7 +20,7 @@ char ** genreVec(char * s, unsigned int * dim){
         return NULL;
 
     unsigned int i = 0;
-    line = strtok(s, DIV);
+    line = strtok(s, GDIV);
 
     while(line != NULL){
         
@@ -110,7 +110,6 @@ void solQ2(moviesADT m){
         toBeginGenre(m, year);
         while(hasNextGenre(m)){
             char * s = nextGenre(m, &filmsGenre);
-            printf("%s\n", s);
             fprintf(f2, "%d;%s;%d\n", year, s, filmsGenre);
         }
     }
