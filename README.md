@@ -44,7 +44,7 @@ en el mismo directorio en el que se viene trabajando y se utiliza el archivo imd
 ## Después de ejecutar
 
 En la salida estándar se podrá leer el siguiente mensaje:
-    `The program ended successfully`
+    `The queries were created successfully!`
 
 Además, se habrán creado en el mismo directorio donde se ejecutó el programa los siguientes archivos:
 * query1.csv
