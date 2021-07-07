@@ -108,8 +108,11 @@ void solQ2(moviesADT m){
     while(hasNextYear(m)){
         year = nextYear(m, &filmsYear, &series);
         toBeginGenre(m, year);
-        char * s = nextGenre(m, &filmsGenre);
-        fprintf(f2, "%d;%s;%d\n", year, s, filmsGenre);
+        while(hasNextGenre(m)){
+            char * s = nextGenre(m, &filmsGenre);
+            printf("%s\n", s);
+            fprintf(f2, "%d;%s;%d\n", year, s, filmsGenre);
+        }
     }
 
     fclose(f2);
@@ -123,8 +126,8 @@ void solQ3(moviesADT m){
 
     unsigned int year, votesF, votesS, films, series;
     double ratingF, ratingS;
-    char * s1; //la pelicula mas votada
-    char * s2; //la serie mas votada
+    char *s1; //la pelicula mas votada
+    char *s2; //la serie mas votada
 
     while(hasNextYear(m)){
         year = nextYear(m, &films, &series);
