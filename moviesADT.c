@@ -3,6 +3,8 @@
 #include<string.h>
 #include<stdlib.h>
 
+#define EMPTY "\N"
+
 //Estructura que contiene los datos de cada pelicula o serie
 typedef struct dataNode{
     char * type;
@@ -86,6 +88,8 @@ static TYear * addYearRec(TYear * first, unsigned int year){
 }
 
 static TYear * addYear(moviesADT m, unsigned int year){
+    if(year == 0)
+        return NULL;
     m->firstYear = addYearRec(m->firstYear, year);
     TYear *aux = searchYear(m->firstYear, year);
     return aux;
@@ -114,6 +118,8 @@ static TGenre * addGenreRec(TGenre * first, char * name){
 }
 
 static void addGenre(TYear * aux, char * name){
+    if(name == EMPTY)
+        return;
     aux->firstGenre = addGenreRec(aux->firstGenre, name);
 }
 
