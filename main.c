@@ -16,8 +16,8 @@ enum  dataset {TYPE = 0, TITLE, STARTY, ENDY, GENRE, RATING, VOTES, TIME};
 //donde en cada posicion almacena un genero, y deja su dimension en un parametro de salida
 char ** genreVec(char * s, unsigned int * dim){
     char * line;
-    char ** vec = malloc(sizeof(char *) * BLOCK);
-    if(vec == NULL)
+    char ** vec = malloc(sizeof(char *) * BLOCK); 
+    if(vec == NULL || errno == ENOMEM)
         return NULL;
 
     unsigned int i = 0;
@@ -28,7 +28,7 @@ char ** genreVec(char * s, unsigned int * dim){
         if(i % BLOCK == 0){
             vec = realloc(vec, sizeof(char *) * (BLOCK + i + 1));
 
-            if(vec == NULL || errno == ENOMEM){ //esta bien?
+            if(vec == NULL || errno == ENOMEM){ 
                 perror("Not enough memory");
                 return NULL;
             }
@@ -39,6 +39,10 @@ char ** genreVec(char * s, unsigned int * dim){
     }
     
     vec = realloc(vec, sizeof(char *) * (i + 1));
+    if(vec == NULL || errno == ENOMEM){ 
+        perror("Not enough memory");
+        return NULL;
+    }
     *dim = i;
     return vec;
 }
@@ -85,6 +89,7 @@ void readData(moviesADT m, FILE * data){
             fprintf(stderr, "Error adding data\n");
             return;
         }
+
         free(vec);
     }  
 }
@@ -186,9 +191,6 @@ int main(int argc, char * argv[]){
     
     //Se libera la memoria utilizada
     freeMoviesADT(movieList);
-
-    //Se libera el vector creado para los generos
- 
 
     printf("The queries were created successfully!\n");
     

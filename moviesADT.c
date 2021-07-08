@@ -63,7 +63,7 @@ static TYear * addYearRec(TYear * first, unsigned int year){
         aux->year = year;
         aux->bestMovie = calloc(1, sizeof(TData));
         if(aux->bestMovie == NULL || errno == ENOMEM){
-            free(aux);          //esto es necesario?
+            free(aux);        
             perror("Not enough memory");
             return NULL;
         }
@@ -196,22 +196,10 @@ unsigned int hasNextGenre(moviesADT m){
 
 char * nextGenre(moviesADT m, unsigned int *movies){
     *movies = m->currentGenre->sizeM;   
-    char * aux = m->currentGenre->name;         //cambie aca
-    // char * aux = malloc(strlen(m->currentGenre->name) + 1);
-    // strcpy(aux, m->currentGenre->name);
+    char * aux = m->currentGenre->name;      
     m->currentGenre = m->currentGenre->tail;
     return aux;
 }
-
-// static void mostVoted(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating, char ** serieTitle, unsigned int * serieVotes, double * serieRating){
-//     TYear * aux = searchYear(m->firstYear, year);
-//     *movieTitle = aux->bestMovie->title;    
-//     *movieVotes = aux->bestMovie->votes;
-//     *movieRating = aux->bestMovie->rating;
-//     *serieTitle = aux->bestSerie->title;    
-//     *serieVotes = aux->bestSerie->votes;
-//     *serieRating = aux->bestSerie->rating;
-// } como dejar un string en un parametro de salida? se puede?
 
 char * mostVotedMovie(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating){
     TYear * aux = searchYear(m->firstYear, year);   //busco el año que me pasan y lo guardo en TYear
@@ -232,8 +220,8 @@ char * mostVotedSerie(moviesADT m, unsigned int year, unsigned int * serieVotes,
 static void freeRecGen(TGenre * first){
     if(first == NULL)
         return;
-    free(first->name);      //cambie aca
     freeRecGen(first->tail);
+    free(first->name);     
     free(first);
 }
 
@@ -242,9 +230,9 @@ static void freeRecYears(TYear * first){
         return;
     freeRecYears(first->tail);
     freeRecGen(first->firstGenre);
-    free(first->bestMovie->title);      //cambie aca
+    free(first->bestMovie->title);     
     free(first->bestMovie);
-    free(first->bestSerie->title);      //cambie aca
+    free(first->bestSerie->title);      
     free(first->bestSerie);
     free(first);
 }
