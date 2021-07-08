@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #define DIV ";\n\r\t"
 #define GDIV ","
@@ -24,8 +25,14 @@ char ** genreVec(char * s, unsigned int * dim){
 
     while(line != NULL){
         
-        if(i % BLOCK == 0)
+        if(i % BLOCK == 0){
             vec = realloc(vec, sizeof(char *) * (BLOCK + i + 1));
+
+            if(vec == NULL || errno == ENOMEM){ //esta bien?
+                perror("Not enough memory");
+                return NULL;
+            }
+        }
         vec[i++] = line;
 
         line = strtok(NULL, GDIV);
@@ -78,6 +85,7 @@ void readData(moviesADT m, FILE * data){
             fprintf(stderr, "Error adding data\n");
             return;
         }
+        free(vec);
     }  
 }
 
@@ -178,6 +186,9 @@ int main(int argc, char * argv[]){
     
     //Se libera la memoria utilizada
     freeMoviesADT(movieList);
+
+    //Se libera el vector creado para los generos
+ 
 
     printf("The queries were created successfully!\n");
     

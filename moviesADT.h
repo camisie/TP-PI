@@ -32,9 +32,14 @@ unsigned int hasNextGenre(moviesADT m);
 //Retorna el siguiente genero, si no hay aborta. Deja en el parametro de salida movies la cantidad de peliculas que tiene ese genero
 char * nextGenre(moviesADT m, unsigned int * movies);
 
+//Recibe un año y retorna el titulo de la pelicula mas votada de ese año.
+//Deja en los parametros de salida la cantidad de votos y el rating de esa pelicula.
 char * mostVotedMovie(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating);
 
+//Recibe un año y retorna el titulo de la serie mas votada de ese año.
+//Deja en los parametros de salida la cantidad de votos y el rating de esa serie.
 char * mostVotedSerie(moviesADT m, unsigned int year, unsigned int * serieVotes, double * serieRating);
+
 // //Deja en los parametros de salida los datos de la pelicula y serie mas votadas en el año (indicado en el parametro year)
 // void mostVoted(moviesADT m, unsigned int year, char ** movieTitle, unsigned int * movieVotes, double * movieRating, char ** serieTitle, unsigned int * serieVotes, double * serieRating);
 

@@ -2,8 +2,9 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include <errno.h>
 
-//Estructura que contiene los datos de cada pelicula o serie
+//Estructura que contiene los datos de la pelicula o serie mas votada
 typedef struct dataNode{
     char * type;
     char * title;
@@ -37,7 +38,7 @@ typedef struct moviesCDT{
 
 moviesADT newMoviesADT(){
     moviesADT newM = calloc(1, sizeof(moviesCDT));
-    if(newM == NULL){
+    if(newM == NULL || errno == ENOMEM){
         perror("Not enough memory");
         return NULL;
     }    
@@ -55,20 +56,20 @@ static TYear * searchYear(TYear * first, unsigned int year){
 static TYear * addYearRec(TYear * first, unsigned int year){
     if(first == NULL || first->year < year){ 
         TYear * aux = calloc(1, sizeof(TYear));
-        if(aux == NULL){
+        if(aux == NULL || errno == ENOMEM){
             perror("Not enough memory");
             return NULL;
         }
         aux->year = year;
         aux->bestMovie = calloc(1, sizeof(TData));
-        if(aux->bestMovie == NULL){
-            free(aux);
+        if(aux->bestMovie == NULL || errno == ENOMEM){
+            free(aux);          //esto es necesario?
             perror("Not enough memory");
             return NULL;
         }
 
         aux->bestSerie = calloc(1, sizeof(TData));
-        if(aux->bestSerie == NULL){
+        if(aux->bestSerie == NULL || errno == ENOMEM){
             if(aux->bestMovie != NULL)
                 free(aux->bestMovie);
             free(aux);
@@ -95,11 +96,15 @@ static TGenre * addGenre(TGenre * first, char * name){
     int c;
     if(first == NULL || (c = strcmp(first->name, name)) > 0){
         TGenre * aux = malloc(sizeof(TGenre));
-        if(aux == NULL){
+
+        if(aux == NULL || errno == ENOMEM){
             perror("Not enough memory");
             return NULL;
         }    
         aux->name = malloc(strlen(name) + 1);
+        if(aux->name == NULL || errno == ENOMEM){
+            return NULL;
+        }
         strcpy(aux->name, name);                
         aux->sizeM = 1;         //porque se que estan llamando a la funcion para agregar una pelicula
         aux->tail = first;
@@ -125,6 +130,10 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         if(currentY->bestSerie->votes < votes){ //Actualizo el mas popular
             currentY->bestSerie->type = type;
             currentY->bestSerie->title = malloc(strlen(title) + 1);
+
+            if(currentY->bestSerie->title == NULL || errno == ENOMEM){
+                return 2;
+            }
             strcpy(currentY->bestSerie->title, title);              
             currentY->bestSerie->rating = rating;
             currentY->bestSerie->votes = votes;
@@ -135,6 +144,10 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
         if(currentY->bestMovie->votes < votes){ //Actualizo el mas popular
             currentY->bestMovie->type = type;
             currentY->bestMovie->title = malloc(strlen(title) + 1);
+
+            if(currentY->bestMovie->title == NULL || errno == ENOMEM){
+                return 2;
+            }
             strcpy(currentY->bestMovie->title, title);             
             currentY->bestMovie->rating = rating;
             currentY->bestMovie->votes = votes;
@@ -190,7 +203,7 @@ char * nextGenre(moviesADT m, unsigned int *movies){
     return aux;
 }
 
-// char * mostVoted(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating, char ** serieTitle, unsigned int * serieVotes, double * serieRating){
+// static void mostVoted(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating, char ** serieTitle, unsigned int * serieVotes, double * serieRating){
 //     TYear * aux = searchYear(m->firstYear, year);
 //     *movieTitle = aux->bestMovie->title;    
 //     *movieVotes = aux->bestMovie->votes;
@@ -198,7 +211,7 @@ char * nextGenre(moviesADT m, unsigned int *movies){
 //     *serieTitle = aux->bestSerie->title;    
 //     *serieVotes = aux->bestSerie->votes;
 //     *serieRating = aux->bestSerie->rating;
-// }
+// } como dejar un string en un parametro de salida? se puede?
 
 char * mostVotedMovie(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating){
     TYear * aux = searchYear(m->firstYear, year);   //busco el año que me pasan y lo guardo en TYear
@@ -216,19 +229,22 @@ char * mostVotedSerie(moviesADT m, unsigned int year, unsigned int * serieVotes,
     return serieTitle;    
 }
 
-static void freeRecGen(TGenre *first){
+static void freeRecGen(TGenre * first){
     if(first == NULL)
         return;
+    free(first->name);      //cambie aca
     freeRecGen(first->tail);
     free(first);
 }
 
-static void freeRecYears(TYear *first){
+static void freeRecYears(TYear * first){
     if(first == NULL)
         return;
     freeRecYears(first->tail);
     freeRecGen(first->firstGenre);
+    free(first->bestMovie->title);      //cambie aca
     free(first->bestMovie);
+    free(first->bestSerie->title);      //cambie aca
     free(first->bestSerie);
     free(first);
 }
