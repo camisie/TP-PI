@@ -4,48 +4,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-
 #define DIV ";\n\r\t"
-#define GDIV ","
 #define MAX 500
-#define BLOCK 20
 
 enum  dataset {TYPE = 0, TITLE, STARTY, ENDY, GENRE, RATING, VOTES, TIME};
-
-//Implementamos una funcion que luego de leer el string con los distintos generos (separados por ,), devuelve un vector,
-//donde en cada posicion almacena un genero, y deja su dimension en un parametro de salida
-char ** genreVec(char * s, unsigned int * dim){
-    char * line;
-    char ** vec = malloc(sizeof(char *) * BLOCK); 
-    if(vec == NULL || errno == ENOMEM)
-        return NULL;
-
-    unsigned int i = 0;
-    line = strtok(s, GDIV);
-
-    while(line != NULL){
-        
-        if(i % BLOCK == 0){
-            vec = realloc(vec, sizeof(char *) * (BLOCK + i + 1));
-
-            if(vec == NULL || errno == ENOMEM){ 
-                perror("Not enough memory");
-                return NULL;
-            }
-        }
-        vec[i++] = line;
-
-        line = strtok(NULL, GDIV);
-    }
-    
-    vec = realloc(vec, sizeof(char *) * (i + 1));
-    if(vec == NULL || errno == ENOMEM){ 
-        perror("Not enough memory");
-        return NULL;
-    }
-    *dim = i;
-    return vec;
-}
 
 void readData(moviesADT m, FILE * data){
     char token[MAX];
@@ -80,9 +42,8 @@ void readData(moviesADT m, FILE * data){
             }
             line = strtok(NULL, DIV);
         }
-        unsigned int dim = 0;
-        char ** vec = genreVec(genre, &dim);
-        int added = addMovieSeries(m, vec, dim, year, type, title, votes, rating);
+
+        int added = addMovieSeries(m, genre, year, type, title, votes, rating);
 
         //Se chequea que se haya agregado correctamente
         if (!added) {
@@ -90,7 +51,6 @@ void readData(moviesADT m, FILE * data){
             return;
         }
 
-        free(vec);
     }  
 }
 

@@ -3,6 +3,8 @@
 #include<string.h>
 #include<stdlib.h>
 #include <errno.h>
+#define BLOCK 20
+#define GDIV ","
 
 //Estructura que contiene los datos de la pelicula o serie mas votada
 typedef struct dataNode{
@@ -118,7 +120,44 @@ static TGenre * addGenre(TGenre * first, char * name){
     return first;
 }
 
-int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int year, char * type, char * title, unsigned int votes, double rating){
+//Devuelve un vector donde en cada posicion almacena un genero, y deja su dimension en un parametro de salida
+char ** genreVec(char * s, unsigned int * dim){
+    char * line;
+    char ** vec = malloc(sizeof(char *) * BLOCK);
+    if(vec == NULL || errno == ENOMEM){
+        perror("Not enough memory");
+        return NULL;
+    }
+
+    unsigned int i = 0;
+    line = strtok(s, GDIV);
+
+    while(line != NULL){
+        if(i % BLOCK == 0){
+            vec= realloc(vec, sizeof(char *) * (BLOCK + i));
+        }
+        if(vec == NULL || errno == ENOMEM){
+            perror("Not enough memory");
+            return NULL;
+        }
+        
+        vec[i] = malloc(strlen(line) + 1);
+        strcpy(vec[i], line);
+        i++;
+
+        line = strtok(NULL, GDIV);
+    }
+    
+    vec = realloc(vec, sizeof(char *) * i);
+    if(vec == NULL || errno == ENOMEM){
+        perror("Not enough memory");
+        return NULL;
+    }
+    *dim = i;
+    return vec;
+}
+
+int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, char * title, unsigned int votes, double rating){
     addYear(m, year); //Busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
     TYear * currentY = searchYear(m->firstYear, year);
     if(currentY == NULL)
@@ -153,11 +192,18 @@ int addMovieSeries(moviesADT m, char ** genre, unsigned int dim, unsigned int ye
             currentY->bestMovie->votes = votes;
         }
         unsigned int i = 0;
+        unsigned int dim = 0;
+        
+        char ** vec = genreVec(genre, &dim);
         //Recorremos el vector que almacena los distintos generos para una pelicula y agregamos la misma en cada uno
         while(i < dim){
-            currentY->firstGenre = addGenre(currentY->firstGenre, genre[i]); //Busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
+            currentY->firstGenre = addGenre(currentY->firstGenre, vec[i]); //Busca el genero y retorna el nodo si esta; sino lo agrega y lo retorna
             i++;
         }
+        for(unsigned int k=0; k < dim; k++){
+            free(vec[k]);
+        }
+        free(vec);
     }
     else
         return 0;   //retorna 0 si NO pudo agregar
