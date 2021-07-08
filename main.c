@@ -54,10 +54,9 @@ void readData(moviesADT m, FILE * data){
     }  
 }
 
-void solQ1(moviesADT m){
+void solQ1(moviesADT m, FILE * f1){
     toBeginYear(m);
 
-    FILE * f1 = fopen("./query1.csv", "w");
     fprintf(f1, "year;films;series\n");
 
     unsigned int year, films, series;
@@ -66,14 +65,11 @@ void solQ1(moviesADT m){
         year = nextYear(m, &films, &series);
         fprintf(f1, "%d;%d;%d\n", year, films, series);
     }
-
-    fclose(f1);
 }
 
-void solQ2(moviesADT m){
+void solQ2(moviesADT m, FILE * f2){
     toBeginYear(m);
 
-    FILE * f2 = fopen("./query2.csv", "w");
     fprintf(f2, "year;genre;films\n");
 
     unsigned int year, filmsYear, series, filmsGenre;
@@ -86,14 +82,11 @@ void solQ2(moviesADT m){
             fprintf(f2, "%d;%s;%d\n", year, s, filmsGenre);
         }
     }
-
-    fclose(f2);
 }
 
-void solQ3(moviesADT m){
+void solQ3(moviesADT m, FILE * f3){
     toBeginYear(m);
 
-    FILE * f3 = fopen("./query3.csv", "w");
     fprintf(f3, "startYear;film;votesFilm;ratingFilm;serie;votesSerie;ratingSerie\n");
 
     unsigned int year, votesF, votesS, films, series;
@@ -105,8 +98,6 @@ void solQ3(moviesADT m){
         char * s2 = mostVotedSerie(m, year, &votesS, &ratingS);
         fprintf(f3, "%d;%s;%d;%g;%s;%d;%g\n", year, s1, votesF, ratingF, s2, votesS, ratingS);
     }
-
-    fclose(f3);
 }
 
 int main(int argc, char * argv[]){
@@ -117,14 +108,13 @@ int main(int argc, char * argv[]){
         return 1;
     }
     
-    //Si el archivo de los queries ya existe, se notifica que hay un error
-    if (fopen("query1.csv", "r") != NULL || fopen("query2.csv", "r") != NULL || fopen("query3.csv", "r") != NULL){
-        fprintf(stderr, "That file already exists\n");
-        return 1;
-    }
-    
     //Se genera el archivo
     FILE * movieSeries = fopen(argv[1], "r");
+
+    //Se abren los archivos csv
+    FILE * f1 = fopen("./query1.csv", "w");
+    FILE * f2 = fopen("./query2.csv", "w");
+    FILE * f3 = fopen("./query3.csv", "w");
 
     //Se comprueba que el archivo exista y se puede abrir
     if(movieSeries == NULL){
@@ -145,12 +135,16 @@ int main(int argc, char * argv[]){
     readData(movieList, movieSeries);
 
     //Una vez leido el archivo, ejecutamos los queries
-    solQ1(movieList);
-    solQ2(movieList);
-    solQ3(movieList);
+    solQ1(movieList, f1);
+    solQ2(movieList, f2);
+    solQ3(movieList, f3);
     
     //Se libera la memoria utilizada
     freeMoviesADT(movieList);
+
+    fclose(f1);
+    fclose(f2);
+    fclose(f3);
 
     printf("The queries were created successfully!\n");
     
