@@ -8,7 +8,6 @@
 
 //Estructura que contiene los datos de la pelicula o serie mas votada
 typedef struct dataNode{
-    char * type;
     char * title;
     double rating;
     unsigned int votes; 
@@ -167,8 +166,7 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
     if(strcmp("tvSeries", type) == 0){ //Si es una serie lo que me pasan
         currentY->totalS++;
         if(currentY->bestSerie->votes < votes){ //Actualizo el mas popular
-            currentY->bestSerie->type = type;
-            currentY->bestSerie->title = malloc(strlen(title) + 1);
+            currentY->bestSerie->title = realloc(currentY->bestSerie->title, strlen(title) + 1);
 
             if(currentY->bestSerie->title == NULL || errno == ENOMEM){
                 return 2;
@@ -181,8 +179,7 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
     else if(strcmp("movie", type) == 0){ //Si me pasan una pelicula
         currentY->totalM++;
         if(currentY->bestMovie->votes < votes){ //Actualizo el mas popular
-            currentY->bestMovie->type = type;
-            currentY->bestMovie->title = malloc(strlen(title) + 1);
+            currentY->bestMovie->title = realloc(currentY->bestMovie->title, strlen(title) + 1);
 
             if(currentY->bestMovie->title == NULL || errno == ENOMEM){
                 return 2;
@@ -207,7 +204,6 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
     }
     else
         return 0;   //retorna 0 si NO pudo agregar
-
     return 1;       //agrego correctamente
 }
 
