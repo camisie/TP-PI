@@ -11,7 +11,7 @@ El programa consiste en procesar los datos de un archivo que contiene informacio
 
 * Contar con una terminal para poder ejecutar el programa
 * Asegurarse de que los siguientes archivos se encuentren descargados y en un mismo directorio:
-    * imdbv2.csv
+    * imdbv3.csv
     * moviesADT.h
     * moviesADT.c
     * main.c
@@ -31,7 +31,7 @@ En caso de querer eliminar el archivo ejecutable creado, se debe ingresar el sig
 ## Ejecución
 
 En la terminal, se ejecuta el siguiente comando:
-    `./imdb imdbv2.csv`
+    `./imdb imdbv3.csv`
 en el mismo directorio en el que se viene trabajando y se utiliza el archivo imdbv2.csv como único argumento. En caso de utilizarse otro archivo de datos con las características requeridas, se inserta ese como argumento. 
     
 **A tener en cuenta:** Si el archivo .csv no se encuentra en el mismo directorio que el ejecutable, debe invocarse agregando el path correspondiente. 
