@@ -119,8 +119,9 @@ static TGenre * addGenre(TGenre * first, char * name){
     return first;
 }
 
+//Recibe un string que contiene los generos separados por ","
 //Devuelve un vector donde en cada posicion almacena un genero, y deja su dimension en un parametro de salida
-char ** genreVec(char * s, unsigned int * dim){
+static char ** genreVec(char * s, unsigned int * dim){
     char * line;
     char ** vec = malloc(sizeof(char *) * BLOCK);
     if(vec == NULL || errno == ENOMEM){
@@ -204,6 +205,7 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
     }
     else
         return 0;   //retorna 0 si NO pudo agregar
+    
     return 1;       //agrego correctamente
 }
 
