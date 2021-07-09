@@ -55,7 +55,8 @@ static TYear * searchYear(TYear * first, unsigned int year){
 }
 
 static TYear * addYearRec(TYear * first, unsigned int year){
-    if(first == NULL || first->year < year){ 
+    if(first == NULL || first->year < year){
+        
         TYear * aux = calloc(1, sizeof(TYear));
         if(aux == NULL || errno == ENOMEM){
             perror("Not enough memory");
@@ -81,6 +82,7 @@ static TYear * addYearRec(TYear * first, unsigned int year){
         aux->tail = first;
         return aux;
     }
+    
     if(first->year > year)
         first->tail = addYearRec(first->tail, year);
 
@@ -88,7 +90,7 @@ static TYear * addYearRec(TYear * first, unsigned int year){
 }
 
 static void addYear(moviesADT m, unsigned int year){
-    if(year == 0)
+    if(year == 0) //El año podria ser 0 si en el archivo leo un "\N"
         return;
     m->firstYear = addYearRec(m->firstYear, year);
 }
@@ -97,13 +99,13 @@ static TGenre * addGenre(TGenre * first, char * name){
     int c;
     if(first == NULL || (c = strcmp(first->name, name)) > 0){
         TGenre * aux = malloc(sizeof(TGenre));
-
         if(aux == NULL || errno == ENOMEM){
             perror("Not enough memory");
             return NULL;
         }    
         aux->name = malloc(strlen(name) + 1);
         if(aux->name == NULL || errno == ENOMEM){
+            perror("Not enough memory");
             return NULL;
         }
         strcpy(aux->name, name);                
@@ -111,6 +113,7 @@ static TGenre * addGenre(TGenre * first, char * name){
         aux->tail = first;
         return aux;
     }
+    
     if(c < 0)
         first->tail = addGenre(first->tail, name);
     else
@@ -158,10 +161,10 @@ static char ** genreVec(char * s, unsigned int * dim){
 }
 
 int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, char * title, unsigned int votes, double rating){
-    addYear(m, year); //Busco el año, si no estaba lo agrega la funcion add y devuelve el nodo. si estaba solo devuelve el nodo
-    TYear * currentY = searchYear(m->firstYear, year);
+    addYear(m, year); //Agrega el año si no estaba
+    TYear * currentY = searchYear(m->firstYear, year); //Busca el año y devuelve un puntero al nodo en el que voy a insertar
     if(currentY == NULL)
-        return 2;   //si en el parametro del año nos pasan "\N" (que nuestra funcion readData lo convierte en 0) 
+        return 2;   //Si en el parametro del año nos pasan "\N" (que nuestra funcion readData lo convierte en 0)
                     //la funcion no agrega
     
     if(strcmp("tvSeries", type) == 0){ //Si es una serie lo que me pasan
@@ -177,6 +180,7 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
             currentY->bestSerie->votes = votes;
         } //sino no hago nada
     }
+    
     else if(strcmp("movie", type) == 0){ //Si me pasan una pelicula
         currentY->totalM++;
         if(currentY->bestMovie->votes < votes){ //Actualizo el mas popular
@@ -189,8 +193,7 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
             currentY->bestMovie->rating = rating;
             currentY->bestMovie->votes = votes;
         }
-        unsigned int i = 0;
-        unsigned int dim = 0;
+        unsigned int i = 0, dim = 0;
         
         char ** vec = genreVec(genre, &dim);
         //Recorremos el vector que almacena los distintos generos para una pelicula y agregamos la misma en cada uno
@@ -203,6 +206,7 @@ int addMovieSeries(moviesADT m, char * genre, unsigned int year, char * type, ch
         }
         free(vec);
     }
+    
     else
         return 0;   //retorna 0 si NO pudo agregar
     
@@ -218,7 +222,7 @@ unsigned int hasNextYear(moviesADT m){
 }
 
 unsigned int nextYear(moviesADT m, unsigned int * movies, unsigned int * series){
-
+    
     *movies = m->currentYear->totalM;
     *series = m->currentYear->totalS;
 
@@ -246,7 +250,7 @@ char * nextGenre(moviesADT m, unsigned int *movies){
 }
 
 char * mostVotedMovie(moviesADT m, unsigned int year, unsigned int * movieVotes, double * movieRating){
-    TYear * aux = searchYear(m->firstYear, year);   //busco el año que me pasan y lo guardo en TYear
+    TYear * aux = searchYear(m->firstYear, year);
     char * movieTitle = aux->bestMovie->title;
     *movieVotes = aux->bestMovie->votes;
     *movieRating = aux->bestMovie->rating;
@@ -254,7 +258,7 @@ char * mostVotedMovie(moviesADT m, unsigned int year, unsigned int * movieVotes,
 }
 
 char * mostVotedSerie(moviesADT m, unsigned int year, unsigned int * serieVotes, double * serieRating){
-    TYear * aux = searchYear(m->firstYear, year);   //busco el año que me pasan y lo guardo en TYear
+    TYear * aux = searchYear(m->firstYear, year);
     char * serieTitle = aux->bestSerie->title;
     *serieVotes = aux->bestSerie->votes;
     *serieRating = aux->bestSerie->rating;

@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <errno.h>
 #define DIV ";\n\r\t"
 #define MAX 500
@@ -15,8 +14,7 @@ void readData(moviesADT m, FILE * data){
 
     //Hay que saltear la primera linea
     fgets(token, MAX, data);
-    int i;
-    int year, votes;
+    int i, year, votes;
     double rating;
     char * type;
     char * title;
